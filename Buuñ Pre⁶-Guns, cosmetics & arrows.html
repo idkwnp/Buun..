@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buuñ: Guns, Cosmetics & Arrows</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; transition: filter 0.3s; }
+        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        #header { position: absolute; top: 10px; width: 100%; text-align: center; color: #f1c40f; font-size: 24px; text-shadow: 3px 3px #c0392b; }
+        
+        #parca-alert { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); color: #8e44ad; font-size: 35px; text-shadow: 3px 3px #000; display: none; z-index: 20; text-transform: uppercase; }
+        #boss-alert { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); color: #ff0000; font-size: 30px; text-shadow: 3px 3px #000; display: none; z-index: 15; text-transform: uppercase; }
+        #infection-timer { position: absolute; top: 110px; left: 20px; color: #e74c3c; font-size: 40px; display: none; text-shadow: 2px 2px #000; }
+
+        #bottom-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 90px; background: linear-gradient(0deg, #111 0%, #222 100%); border-top: 4px solid #f1c40f; display: flex; justify-content: space-around; align-items: center; color: #fff; pointer-events: auto; }
+        .stat-box { text-align: center; border: 2px solid #f1c40f; padding: 5px 15px; background: rgba(0,0,0,0.8); min-width: 110px; }
+        .stat-label { font-size: 10px; display: block; color: #f1c40f; }
+        .stat-num { font-size: 28px; font-weight: bold; }
+        #cd-display { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); color: #f1c40f; font-size: 14px; text-shadow: 2px 2px #000; text-align: center; }
+        #bars-container { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); width: 200px; display: flex; flex-direction: column; gap: 5px; }
+        #weapon-bar-container { position: absolute; bottom: 100px; right: 6.5%; width: 110px; display: flex; flex-direction: column; gap: 5px; }
+        .bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border: 1px solid #000; pointer-events: none; }
+        #dash-bar { width: 100%; height: 100%; background: #fff; }
+        #shield-bar { width: 100%; height: 100%; background: #0088ff; }
+        #weapon-bar { width: 100%; height: 100%; background: #2ecc71; }
+        #msg-console { position: absolute; top: 50px; left: 20px; color: #2ecc71; font-size: 12px; font-family: 'Courier New'; text-shadow: 1px 1px #000; }
+        #crosshair { position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; transform: translate(-50%, -50%); border: 2px solid #2ecc71; }
+        #flash { position: absolute; width: 100%; height: 100%; background: #e74c3c; opacity: 0; pointer-events: none; }
+        #pause-menu { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20; color: white; flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; backdrop-filter: blur(8px); }
+        .pause-box { background: #111; padding: 25px; border: 3px solid #f1c40f; text-align: center; width: 420px; }
+        .setting-row { margin: 12px 0; text-align: left; }
+        label { font-size: 12px; color: #f1c40f; text-transform: uppercase; }
+        select, input[type="range"] { width: 100%; background: #222; color: #fff; border: 1px solid #f1c40f; padding: 6px; margin-top: 5px; }
+        #resume-btn { background: #2ecc71; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; color: #000; font-size: 16px; }
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px); overflow-y: auto; }
+        .mode-btn { background: #111; color: #f1c40f; border: 2px solid #f1c40f; padding: 12px; font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; margin-top: 8px; width: 100%; }
+        .mode-btn:hover { background: #f1c40f; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen">
+        <div class="pause-box">
+            <h2 style="color:#f1c40f; margin-top:0;">Buuñ: Guns, Cosmetics & Arrows update</h2>
+            <button class="mode-btn" style="border-color: #008f39; color: #008f39;" onclick="startGame('normal')">Normal</button>
+            <button class="mode-btn" style="border-color: #ff0000; color: #ff0000;" onclick="startGame('extreme')">Super Mega Duper Extreme demon😈</button>
+            <button class="mode-btn" style="border-color: #e62e1b; color: #e62e1b;" onclick="startGame('double')">Double trouble</button>
+            <button class="mode-btn" style="border-color: #ff8000; color: #ff8000;" onclick="startGame('lava')">El piso es lava</button>
+            <button class="mode-btn" style="border-color: #ffffff; color: #ffffff;" onclick="startGame('dyd')">Dye of Deaf</button>
+            <button class="mode-btn" style="border-color: #e74c3c; color: #e74c3c;" onclick="startGame('un-toque')">Un toque (1 HP)</button>
+            <button class="mode-btn" style="border-color: #2ecc71; color: #2ecc71;" onclick="startGame('infection')">Infection (Reloj)</button>
+            <button class="mode-btn" style="border-color: #ff66b2; color: #ff66b2;" onclick="startGame('april-normal')">""normal""</button>
+        </div>
+    </div>
+
+    <div id="game-ui">
+        <div id="flash"></div>
+        <div id="header">Buuñ: Guns, Cosmetics & Arrows</div>
+        <div id="parca-alert">EL DUO DE LA PARCA SPAWNEO</div>
+        <div id="boss-alert">BOSS SPAWNEO</div>
+        <div id="infection-timer">30</div>
+        <div id="cd-display">COOLDOWN ARMA: <span id="cd-val">0.75</span>s</div>
+        
+        <div id="bars-container">
+            <div class="bar-bg" title="Dash (SHIFT)"><div id="dash-bar"></div></div>
+            <div class="bar-bg" title="Escudo (Q)"><div id="shield-bar"></div></div>
+        </div>
+
+        <div id="weapon-bar-container">
+            <div class="bar-bg" title="Cooldown Botis"><div id="weapon-bar"></div></div>
+        </div>
+
+        <div id="msg-console">
+            > MANTENER CLICK 1: DISPARAR | CLICK 2: ZOOM<br>
+            > SHIFT: DASH CORTO | Q: ESCUDO TEMP | E: CURAR<br>
+            > F3: 3RA PERSONA | ESC: AJUSTES
+        </div>
+        <div id="crosshair"></div>
+        <div id="bottom-bar">
+            <div class="stat-box"><span class="stat-label">DAÑO</span><span id="dmg-val" class="stat-num">25</span></div>
+            <div class="stat-box"><span class="stat-label">HP</span><span id="hp-val" class="stat-num">150</span></div>
+            <div class="stat-box"><span class="stat-label">KILLS</span><span id="kills-val" class="stat-num">0</span></div>
+            <div class="stat-box" style="border-color: #2ecc71;"><span class="stat-label">BOTIS</span><span id="med-val" class="stat-num">0</span></div>
+        </div>
+    </div>
+
+    <div id="pause-menu">
+        <div class="pause-box">
+            <h2 style="color:#f1c40f; margin-top:0;">MENÚ DE PAUSA</h2>
+            <div class="setting-row">
+                <label>FOV</label>
+                <input type="range" id="fov-slider" min="60" max="110" value="75">
+            </div>
+            <div class="setting-row">
+                <label>SENSIBILIDAD</label>
+                <input type="range" id="sens-slider" min="0.1" max="3" step="0.1" value="1">
+            </div>
+            <div class="setting-row">
+                <label>SKIN (SYNC)</label>
+                <select id="skin-select">
+                    <option value="default">Original</option>
+                    <option value="neon">Neon (Verde)</option>
+                    <option value="gold">Oro (Midas)</option>
+                    <option value="lava">Lava (Fuego)</option>
+                    <option value="void">Ender (Morado)</option>
+                    <option value="kawaii">Kawaii (Rosa)</option>
+                    <option value="retro">#SoRetro</option>
+                    <option value="retro_2">#SoRetro²</option>
+                    <option value="retro_1_5">#SoRetro a la 1.5</option>
+                    <option value="invertido">Invertido (Locura total)</option>
+                    <option value="rgb">Skin RGB</option>
+                    <option value="holograma">Skin Holograma</option>
+                    <option value="racism" style="background-color: #ff66b2; color: #000;">Say no to racism</option>
+<option value="gemininopuedemas" style="background-color: #ff0000; color: #000;">ERROR</option>
+<option value="argentinapapa" style="background-color: #75aadb; color: #000;">Argentina</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label>HORARIO</label>
+                <select id="time-select">
+                    <option value="night">Noche</option>
+                    <option value="day">Día</option>
+                </select>
+            </div>
+            <button id="resume-btn">GUARDAR Y VOLVER</button>
+        </div>
+    </div>
+
+    <script>
+        const gameMusic = new Audio('ONEBOUNCE.mp3.mp3'); 
+        gameMusic.loop = true;
+        gameMusic.volume = 0.5;
+
+        const shopMusic = new Audio('ScrappedEmoteShopTheme.mp3.mp3');
+        shopMusic.loop = true;
+        shopMusic.volume = 0.5;
+
+        const audioBlockHit = new Audio('BlockHit.mp3.mp3'); 
+
+        const scene = new THREE.Scene();
+        const visualCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const playerController = new THREE.Object3D();
+        
+        let player = { hp: 150, kills: 0, dmg: 25, medkits: 0, lastShot: 0, cooldown: 750, isAiming: false }; 
+        let enemyBaseHp = 150; 
+        let floor;
+        let enemies = [], bullets = [], structures = [], particles = [], chests = [], keys = {};
+        
+        let currentSkin = 'default', isPaused = true, isThirdPerson = false, isExtremeMode = false;
+        let currentGameMode = 'normal';
+        let gameStarted = false;
+        let isShooting = false;
+        let shakeIntensity = 0;
+        let lastRgbInterval = 0;
+        
+        let canDash = true;
+        const dashCooldownTime = 1700; 
+        let dashAnimationStartTime = -dashCooldownTime; 
+        let isShieldActive = false;
+        const shieldDuration = 10000;
+        const shieldCooldown = 20000;
+        let shieldActivationTime = -shieldCooldown;
+        let shieldMesh;
+        let lastPassiveSpawn = Date.now();
+        let lastMedkitTime = 0;
+
+        let infectionTime = 30;
+        let infectionInterval = null;
+
+        let killedNormalBoss = false, killedAtomic = false, killedStalkerBoss = false;
+
+        const skinColors = {
+            default: { enemy: 0xe74c3c, stalker: 0xff8888, player: 0x0a1a3a, eye: 0x00ffff, gun: 0x333333, atomic: 0xff0000 }, 
+            neon: { enemy: 0x00ff00, stalker: 0x88ff88, player: 0x002222, eye: 0x00ff00, gun: 0x00ff00, atomic: 0xff00ff },
+            gold: { enemy: 0xffffff, stalker: 0xdddddd, player: 0x221100, eye: 0xffd700, gun: 0xffd700, atomic: 0xffffff },
+            lava: { enemy: 0xff4500, stalker: 0xffaa00, player: 0x110000, eye: 0xff0000, gun: 0x441100, atomic: 0xffff00 },
+            void: { enemy: 0x8e44ad, stalker: 0xdabfff, player: 0x05000a, eye: 0xff00ff, gun: 0x8e44ad, atomic: 0x00ffff },
+            kawaii: { enemy: 0xff69b4, stalker: 0xffc0cb, player: 0xffffff, eye: 0xff1493, gun: 0xffb6c1, atomic: 0xffffff },
+            retro: { enemy: 0xff0000, stalker: 0xffaaaa, player: 0x330000, eye: 0xffff00, gun: 0x222222, atomic: 0x0000ff }, 
+            retro_2: { enemy: 0x7f2a1f, stalker: 0xcc8888, player: 0x330000, eye: 0x444400, gun: 0x222222, atomic: 0x0000ff }, 
+            retro_1_5: { enemy: 0x000000, stalker: 0x333333, player: 0x111111, eye: 0x444444, gun: 0x111111, atomic: 0xffffff },
+            invertido: { enemy: 0x888888, stalker: 0xcccccc, player: 0x888888, eye: 0x888888, gun: 0x888888, atomic: 0x000000 },
+            racism: { enemy: 0xe74c3c, stalker: 0xe74c3c, player: 0xe74c3c, eye: 0xe74c3c, gun: 0xe74c3c, atomic: 0xe74c3c },
+gemininopuedemas: { enemy: 0x000000, stalker: 0x4e545c, player: 0x1b1b1b, eye: 0x000000, gun: 0x000000, atomic: 0x8d9797 },
+argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xffffff, gun: 0xffffff, atomic: 0xffffff }
+        };
+
+        const playerModel = new THREE.Group();
+        const pBody = new THREE.Mesh(new THREE.BoxGeometry(2, 5, 2), new THREE.MeshStandardMaterial());
+        pBody.position.y = -2.5;
+        const pEye = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.5, 0.5), new THREE.MeshBasicMaterial());
+        pEye.position.set(0, -0.8, -0.9);
+        playerModel.add(pBody, pEye);
+        shieldMesh = new THREE.Mesh(new THREE.SphereGeometry(3.5, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 0.35 }));
+        shieldMesh.position.y = -2.5;
+        shieldMesh.visible = false;
+        playerModel.add(shieldMesh);
+        playerModel.visible = false;
+        playerController.add(playerModel);
+        
+        const gunBody = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 15.0), new THREE.MeshStandardMaterial({color: 0x333333}));
+        gunBody.position.set(1.0, -0.8, -2.0); 
+        playerController.add(gunBody);
+
+        window.addEventListener('resize', () => {
+            visualCamera.aspect = window.innerWidth / window.innerHeight;
+            visualCamera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function initWorld() {
+            scene.background = new THREE.Color(0x05050a);
+            scene.fog = new THREE.Fog(0x05050a, 10, 100);
+            playerController.position.y = 3.5;
+            scene.add(playerController);
+            visualCamera.rotation.order = 'YXZ';
+            playerController.add(visualCamera);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            floor = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({color: 0x111122}));
+            floor.rotation.x = -Math.PI/2;
+            scene.add(floor);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+            spawnStructures();
+            setSafePlayerSpawn();
+            for(let i=0; i<6; i++) spawnEnemy();
+            for(let i=0; i<5; i++) spawnChest();
+        }
+
+        function spawnStructures() {
+            for(let i=0; i<85; i++) {
+                const h = 12 + Math.random()*15;
+                const wall = new THREE.Mesh(new THREE.BoxGeometry(12, h, 12), new THREE.MeshStandardMaterial({color: 0x1a1a2e}));
+                wall.position.set(Math.random()*499-150, h/2, Math.random()*499-150);
+                scene.add(wall);
+                structures.push(wall);
+            }
+        }
+
+        function setSafePlayerSpawn() {
+            let safeSpawn = false;
+            while(!safeSpawn) {
+                playerController.position.set(Math.random()*160-80, 3.5, Math.random()*160-80);
+                safeSpawn = true;
+                for(let wall of structures) {
+                    if(Math.abs(playerController.position.x - wall.position.x) < 9 && Math.abs(playerController.position.z - wall.position.z) < 9) {
+                        safeSpawn = false; break;
+                    }
+                }
+            }
+        }
+
+        function triggerBossAlert() {
+            const alert = document.getElementById('boss-alert');
+            alert.style.display = 'block';
+            setTimeout(() => { alert.style.display = 'none'; }, 2000); 
+        }
+
+        function spawnDuoParca(basePos) {
+            document.getElementById('parca-alert').style.display = 'block';
+            setTimeout(() => { document.getElementById('parca-alert').style.display = 'none'; }, 2000);
+            let pos1 = basePos ? basePos.clone() : new THREE.Vector3(Math.random()*200-100, 2.5*2.5, Math.random()*200-100);
+            let pos2 = pos1.clone().add(new THREE.Vector3(6, 0, 6));
+            createStalkaze(true, pos1);
+            createStalkaze(false, pos2);
+        }
+
+        function createStalkaze(isBossVariant, pos) {
+            const group = new THREE.Group();
+            let mult = isBossVariant ? 2.5 : 1; 
+            const body = new THREE.Mesh(new THREE.BoxGeometry(3*mult, 5*mult, 3*mult), new THREE.MeshStandardMaterial());
+            const visor = new THREE.Mesh(new THREE.BoxGeometry(2*mult, 0.5*mult, 0.5*mult), new THREE.MeshBasicMaterial());
+            visor.position.set(0, 1.5*mult, 1.5*mult);
+            const eyeGeom = new THREE.BoxGeometry(0.5*mult, 1.5*mult, 0.2*mult), eyeMat = new THREE.MeshBasicMaterial({color: 0xffff00});
+            const eyeL = new THREE.Mesh(eyeGeom, eyeMat); eyeL.position.set(-0.6*mult, 1.5*mult, 1.51*mult);
+            const eyeR = new THREE.Mesh(eyeGeom, eyeMat); eyeR.position.set(0.6*mult, 1.5*mult, 1.51*mult);
+            group.add(body, visor, eyeL, eyeR);
+            group.position.copy(pos);
+            group.position.y = 2.5 * mult;
+            let hp = isBossVariant ? (isExtremeMode ? 50 * player.dmg : 30 * player.dmg) : (isExtremeMode ? 750 : 575);
+            if (currentGameMode === 'un-toque') hp = 1;
+            group.userData = {
+                hp: hp,
+                isBoss: isBossVariant,
+                isStalkazeBoss: isBossVariant,
+                isStalkazeMinion: !isBossVariant,
+                baseSpeed: isBossVariant ? 0.40 : 0.70,
+                speed: isBossVariant ? 0.40 : 0.70,
+                lastShot: 0,
+                meleeDmg: isExtremeMode ? 9999 : 80,
+                hitRadius: isBossVariant ? 5.5 : 3.5
+            };
+            scene.add(group);
+            enemies.push(group);
+            applySkinToEnemy(group);
+        }
+
+        function getEnemyStats(boss, isStalker, isImmortal, isSmall, isKamikaze = false, isAtomic = false, isStalkerBoss = false, isSniper = false) {
+            let hp;
+            if (isSniper) hp = isExtremeMode ? 250 : 200;
+            else if (isAtomic) hp = 500 + (player.kills * 20);
+            else if (isStalkerBoss) hp = player.dmg * 20;
+            else if (isKamikaze) hp = isExtremeMode ? (100 + player.kills * 15) : (50 + player.kills * 15);
+            else if (boss) hp = isExtremeMode ? player.dmg * (20 + player.kills * 10) : player.dmg * (10 + player.kills * 5);
+            else if (isStalker) hp = isImmortal ? Infinity : (isExtremeMode ? 250 : 175);
+            else hp = isExtremeMode ? 200 : enemyBaseHp;
+            if (currentGameMode === 'un-toque') hp = 1;
+            
+            let normalSpeed = boss ? 0.08 : (isSmall ? 0.25 : 0.16);
+            if (isImmortal) normalSpeed = 0.50; 
+            if (isAtomic) normalSpeed = 0.32;
+            if (isKamikaze) normalSpeed = 0.64;
+            if (isStalkerBoss) normalSpeed = 0.24;
+            if (isSniper) normalSpeed = 0;
+            
+            let finalSpeed = isStalker ? normalSpeed * 3 : normalSpeed; 
+            let meleeDmg = (currentGameMode === 'un-toque') ? 999 : (isExtremeMode && isStalker ? 60 : 30);
+            if (currentGameMode === 'dyd') meleeDmg = 50;
+            
+            return { 
+                hp: hp, isBoss: boss || isAtomic || isStalkerBoss, isStalker: isStalker || isStalkerBoss, 
+                isImmortal: isImmortal, isSmall: isSmall, isKamikaze: isKamikaze || isAtomic, 
+                isAtomic: isAtomic, isStalkerBoss: isStalkerBoss, isSniper: isSniper, speed: finalSpeed, lastShot: 0, 
+                lastMelee: 0, meleeDmg: meleeDmg, aimStart: 0
+            };
+        }
+
+        function spawnEnemy(boss = false, isImmortal = false, spawnPos = null, isSmall = false, parentData = null) {
+            if (isExtremeMode && Math.random() < 0.20 && !isImmortal && !isSmall && !parentData) boss = true;
+            if (boss && !parentData && killedNormalBoss && killedAtomic && killedStalkerBoss && Math.random() < 0.35) {
+                spawnDuoParca(spawnPos); return;
+            }
+            let isAtomic = false, isStalkerBoss = false, isKamikaze = false, isStalker = false, isSniper = false;
+            if (parentData) {
+                isStalker = parentData.isStalker; isKamikaze = parentData.isKamikaze;
+                isAtomic = parentData.isAtomic; isStalkerBoss = parentData.isStalkerBoss;
+            } else {
+                let spawnRoll = Math.random();
+                if (!boss && !isImmortal && !isSmall) {
+                    let hasSniper = enemies.some(e => e.userData.isSniper);
+                    if (!hasSniper && Math.random() < 0.15) {
+                        isSniper = true;
+                    } else if (spawnRoll < 0.30) isKamikaze = true;
+                    else if (spawnRoll < 0.55) isStalker = true;
+                }
+                if (boss && Math.random() < 0.3) { if (Math.random() < 0.5) isAtomic = true; else isStalkerBoss = true; }
+            }
+            if (boss || isAtomic || isStalkerBoss) triggerBossAlert();
+            const group = new THREE.Group();
+            let mult = (boss || isStalkerBoss || isAtomic) ? 2.5 : (isSmall ? 0.5 : 1);
+            const body = new THREE.Mesh(new THREE.BoxGeometry(3*mult, 5*mult, 3*mult), new THREE.MeshStandardMaterial());
+            const visor = new THREE.Mesh(new THREE.BoxGeometry(2*mult, 0.5*mult, 0.5*mult), new THREE.MeshBasicMaterial());
+            visor.position.set(0, 1.5*mult, 1.5*mult);
+            const eyeGeom = new THREE.BoxGeometry(0.5*mult, 1.5*mult, 0.2*mult), eyeMat = new THREE.MeshBasicMaterial({color: 0xffff00});
+            const eyeL = new THREE.Mesh(eyeGeom, eyeMat); eyeL.position.set(-0.6*mult, 1.5*mult, 1.51*mult);
+            const eyeR = new THREE.Mesh(eyeGeom, eyeMat); eyeR.position.set(0.6*mult, 1.5*mult, 1.51*mult);
+            group.add(body, visor, eyeL, eyeR);
+            
+            if (isSniper) {
+                let targetStruct = structures[Math.floor(Math.random() * structures.length)];
+                group.position.set(targetStruct.position.x, targetStruct.geometry.parameters.height + 2.5, targetStruct.position.z);
+                let laserMat = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                let laserGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,1)]);
+                let laser = new THREE.Line(laserGeo, laserMat);
+                laser.visible = false;
+                group.add(laser);
+                group.userData.laser = laser;
+                group.userData.targetStruct = targetStruct;
+            } else if(spawnPos) {
+                group.position.copy(spawnPos);
+            } else {
+                group.position.set(Math.random()*200-100, 2.5*mult, Math.random()*200-100);
+            }
+            
+            group.userData = getEnemyStats(boss, isStalker, isImmortal, isSmall, isKamikaze, isAtomic, isStalkerBoss, isSniper);
+            if (isSniper) group.userData.laser = group.children[group.children.length - 1];
+            
+            scene.add(group); enemies.push(group); applySkinToEnemy(group); 
+        }
+
+        function spawnChest() {
+            let valid = false, px, pz, attempts = 0;
+            while(!valid && attempts < 20) { px = Math.random()*700-350; pz = Math.random()*700-350; valid = true; for(let wall of structures) if(Math.abs(px - wall.position.x) < 8.5 && Math.abs(pz - wall.position.z) < 8.5) { valid = false; break; } attempts++; }
+            const ch = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshStandardMaterial({color: 0x2ecc71, emissive: 0x2ecc71, emissiveIntensity: 0.5}));
+            ch.position.set(px, 1, pz); scene.add(ch); chests.push(ch);
+        }
+
+        function createDeathParticles(pos, color) {
+            for(let i=0; i<8; i++) {
+                const p = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), new THREE.MeshBasicMaterial({color: color}));
+                p.position.copy(pos);
+                p.userData = { vel: new THREE.Vector3((Math.random()-0.5)*0.5, Math.random()*0.5, (Math.random()-0.5)*0.5), life: 1.0 };
+                scene.add(p); particles.push(p);
+            }
+        }
+
+        function fireBullet(isEnemy = false, origin = null, direction = null, isBossBullet = false, isSniperBullet = false, ignoreStruct = null) {
+            if(!isEnemy && (currentGameMode === 'dyd' || currentGameMode === 'april-normal')) return;
+            const b = new THREE.Mesh(new THREE.SphereGeometry(isBossBullet ? 0.6 : (isSniperBullet ? 0.2 : 0.35)), new THREE.MeshBasicMaterial({color: isEnemy ? (isSniperBullet ? 0x808080 : 0xff0000) : 0xffff00}));
+            b.userData = { startTime: Date.now() }; 
+            if(!isEnemy) {
+                b.position.copy(playerController.position);
+                const dir = new THREE.Vector3(0,0,-1).applyQuaternion(visualCamera.getWorldQuaternion(new THREE.Quaternion()));
+                Object.assign(b.userData, { vel: dir.multiplyScalar(3.0), isEnemy: false });
+                player.lastShot = Date.now(); gunBody.position.z += 0.8; if (gunBody.position.z > -0.5) gunBody.position.z = -0.5; shakeIntensity = 0.15; 
+            } else {
+                b.position.copy(origin);
+                Object.assign(b.userData, { vel: direction.multiplyScalar(isSniperBullet ? 3.0 : 1.2), isEnemy: true, isBossBullet: isBossBullet, isSniperBullet: isSniperBullet, ignoreStruct: ignoreStruct });
+            }
+            scene.add(b); bullets.push(b);
+        }
+
+        function applySkinToEnemy(en) {
+            const body = en.children[0], visor = en.children[1], eyeL = en.children[2], eyeR = en.children[3];
+            const s = skinColors[currentSkin] || skinColors['default'];
+            body.scale.y = 1.0; body.position.y = 0.0;
+            body.material.wireframe = (currentSkin === 'holograma');
+            let enemyColor;
+            if (currentSkin === 'racism') { enemyColor = 0xe74c3c; } 
+            else if (en.userData.isSniper) {
+                if (currentSkin === 'rgb') {
+                    let rgbStep = Math.floor(Date.now() / 1000) % 3;
+                    let shades = [0x000000, 0x808080, 0xffffff];
+                    enemyColor = shades[rgbStep];
+                } else {
+                    enemyColor = 0x808080;
+                }
+            }
+            else if (currentSkin === 'rgb') {
+                let rgbStep = Math.floor(Date.now() / 2000) % 6;
+                let hues = [0, 0.16, 0.33, 0.5, 0.66, 0.83];
+                let l = (en.userData.isStalker || en.userData.isStalkerBoss) ? 0.8 : ((en.userData.isKamikaze || en.userData.isAtomic) ? 0.2 : 0.5);
+                enemyColor = new THREE.Color().setHSL(hues[rgbStep], 1.0, l).getHex();
+            } else if (currentSkin === 'holograma') {
+                enemyColor = (en.userData.isStalker || en.userData.isStalkerBoss) ? 0x88ffff : ((en.userData.isKamikaze || en.userData.isAtomic) ? 0x004444 : 0x00ffff);
+            } else {
+                if (en.userData.isAtomic) enemyColor = s.atomic;
+                else if (en.userData.isKamikaze) enemyColor = (currentSkin === 'retro_1_5') ? 0xbbbbbb : 0x440000;
+                else enemyColor = en.userData.isStalker ? s.stalker : s.enemy;
+            }
+            if(en.userData.isImmortal && currentSkin !== 'rgb' && currentSkin !== 'holograma' && currentSkin !== 'racism') enemyColor = 0xffffff; 
+            if (en.userData.isStalkazeBoss || en.userData.isStalkazeMinion) {
+                if (currentSkin === 'racism') enemyColor = 0xe74c3c;
+                else if (currentSkin === 'rgb') {
+                    let rgbStep = Math.floor(Date.now() / 1000) % 3;
+                    let coolHues = [0.5, 0.66, 0.83];
+                    enemyColor = new THREE.Color().setHSL(coolHues[rgbStep], 1.0, 0.5).getHex();
+                } else enemyColor = 0x8e44ad;
+            }
+            body.material.color.setHex(enemyColor); body.material.emissive.setHex(0x000000); 
+            if (currentSkin === 'retro') { visor.visible = false; eyeL.visible = true; eyeR.visible = true; } 
+            else if (currentSkin === 'retro_2' || currentSkin === 'retro_1_5') { visor.visible = false; eyeL.visible = false; eyeR.visible = false; if(currentSkin === 'retro_1_5') { body.scale.y = 1.8; body.position.y = 2.0; } } 
+            else { visor.visible = true; eyeL.visible = false; eyeR.visible = false; }
+        }
+
+        function applySettings() {
+            const time = document.getElementById('time-select').value;
+            const ambientLight = scene.children.find(c => c.type === 'AmbientLight');
+            if(time === 'day') { scene.background.setHex(0x87ceeb); scene.fog.color.setHex(0x87ceeb); ambientLight.intensity = 1.2; } 
+            else { scene.background.setHex(0x05050a); scene.fog.color.setHex(0x05050a); ambientLight.intensity = 1.1; }
+            currentSkin = document.getElementById('skin-select').value;
+            document.body.style.filter = (currentSkin === 'invertido') ? "invert(1)" : "none";
+            const s = skinColors[currentSkin] || skinColors['default'];
+            pBody.material.color.setHex(s.player); pEye.material.color.setHex(s.eye); gunBody.material.color.setHex(s.gun);
+            pBody.material.wireframe = (currentSkin === 'holograma'); gunBody.material.wireframe = (currentSkin === 'holograma');
+            let floorColor = 0x111122; let structColor = 0x1a1a2e;
+            if (currentGameMode === 'lava') floorColor = 0xcc1100;
+            if (currentSkin === 'lava') { floorColor = 0xcc1100; structColor = 0xcc1100; }
+            if (floor) floor.material.color.setHex(floorColor);
+            structures.forEach(w => w.material.color.setHex(structColor));
+            enemies.forEach(en => applySkinToEnemy(en));
+        }
+
+        function startGame(mode) {
+            currentGameMode = mode;
+            isExtremeMode = (mode === 'extreme');
+            gameStarted = true; isPaused = false;
+            document.getElementById('start-screen').style.display = 'none';
+            enemies.forEach(en => scene.remove(en)); enemies = [];
+            
+            if (currentGameMode === 'un-toque') { player.hp = 1; } else { player.hp = 150; }
+            
+            if (currentGameMode === 'infection' || currentGameMode === 'april-normal') {
+                infectionTime = (currentGameMode === 'april-normal') ? 150 : 30;
+                document.getElementById('infection-timer').style.display = 'block';
+                if(infectionInterval) clearInterval(infectionInterval);
+                infectionInterval = setInterval(() => {
+                    if (!isPaused && gameStarted) {
+                        infectionTime--; 
+                        let mins = Math.floor(infectionTime / 60);
+                        let secs = infectionTime % 60;
+                        document.getElementById('infection-timer').innerText = (currentGameMode === 'april-normal') ? mins + ":" + (secs < 10 ? "0"+secs : secs) : infectionTime;
+                        if (infectionTime <= 0) { 
+                            if (currentGameMode === 'april-normal') alert("PERDISTE: No lograste morir a tiempo.");
+                            player.hp = 0; updateUI(); 
+                        }
+                    }
+                }, 1000);
+            }
+
+            if (mode !== 'dyd') { gameMusic.currentTime = 0; gameMusic.play(); } else { gameMusic.pause(); }
+            
+            if (mode !== 'dyd' && mode !== 'april-normal') { 
+                gunBody.visible = true; 
+                for(let i=0; i<6; i++) spawnEnemy(); 
+            } else { 
+                gunBody.visible = false; 
+                if (mode === 'dyd') spawnEnemy(false, true); 
+                if (mode === 'april-normal') spawnEnemy(false, true);
+            }
+            if (mode === 'lava') { setInterval(() => { if (!isPaused && player.hp > 0 && !isShieldActive) { player.hp -= 10; triggerFlash(0.3); updateUI(); } }, 1000); }
+            applySettings(); document.body.requestPointerLock(); lastPassiveSpawn = Date.now(); updateUI();
+        }
+
+        function triggerFlash(opacity, duration = 100, color = '#e74c3c') { 
+            const flash = document.getElementById('flash'); 
+            flash.style.background = color; flash.style.opacity = opacity; setTimeout(() => flash.style.opacity = 0, duration); 
+        }
+
+        function updateUI() {
+            if (currentGameMode === 'un-toque' && player.hp > 0) player.hp = 1;
+            document.getElementById('hp-val').innerText = Math.round(player.hp);
+            document.getElementById('kills-val').innerText = player.kills;
+            document.getElementById('med-val').innerText = (currentGameMode === 'dyd') ? player.medkits + "/15" : player.medkits;
+            document.getElementById('dmg-val').innerText = Math.round(player.dmg);
+            document.getElementById('cd-val').innerText = (player.cooldown / 1000).toFixed(2);
+            if(currentGameMode === 'dyd' && player.medkits >= 15) { alert("¡VICTORIA!"); location.reload(); }
+            if(player.hp <= 0) { 
+                if (currentGameMode === 'april-normal') alert("¡GANASTE! Lograste morir.");
+                gameMusic.pause(); if(infectionInterval) clearInterval(infectionInterval); location.reload(); 
+            }
+        }
+
+        function resumeGame() {
+            isPaused = false; document.getElementById('pause-menu').style.display = 'none';
+            document.body.requestPointerLock(); applySettings();
+            shopMusic.pause();
+            if (currentGameMode !== 'dyd') { gameMusic.play(); }
+        }
+
+        window.addEventListener('mousedown', e => { 
+            if(!gameStarted || isPaused) return; 
+            if(document.pointerLockElement !== document.body) { document.body.requestPointerLock(); return; } 
+            if(e.button === 0) { isShooting = true; if(Date.now() - player.lastShot > player.cooldown) fireBullet(false); } 
+            if(!isThirdPerson && e.button === 2) player.isAiming = true; 
+        });
+        window.addEventListener('mouseup', e => { if(e.button === 0) isShooting = false; if(e.button === 2) player.isAiming = false; });
+        
+        window.addEventListener('keydown', e => {
+            if(e.code === 'Escape' && gameStarted) {
+                if(!isPaused) { 
+                    isPaused = true; 
+                    document.getElementById('pause-menu').style.display = 'flex'; 
+                    gameMusic.pause(); 
+                    shopMusic.play(); 
+                } else resumeGame();
+            }
+            if(e.code === 'F3') { e.preventDefault(); isThirdPerson = !isThirdPerson; playerModel.visible = isThirdPerson; }
+            if(e.code === 'KeyE' && player.medkits > 0 && currentGameMode !== 'dyd' && currentGameMode !== 'april-normal') { 
+                let medkitCooldown = (currentGameMode === 'lava') ? 2000 : 5000;
+                if (Date.now() - lastMedkitTime >= medkitCooldown) { player.hp = Math.min(150, player.hp + 50); player.medkits--; updateUI(); lastMedkitTime = Date.now(); }
+            }
+            if(e.code === 'KeyQ' && currentGameMode !== 'dyd') { if (Date.now() - shieldActivationTime > shieldCooldown) { isShieldActive = true; shieldMesh.visible = true; shieldActivationTime = Date.now(); } }
+            if(e.code === 'ShiftLeft' && canDash) { 
+                let dashDir = new THREE.Vector3(0,0,0);
+                if (keys['KeyW']) dashDir.z -= 1; if (keys['KeyS']) dashDir.z += 1;
+                if (keys['KeyA']) dashDir.x -= 1; if (keys['KeyD']) dashDir.x += 1;
+                if (dashDir.lengthSq() > 0) {
+                    dashDir.normalize().applyQuaternion(playerController.quaternion);
+                    let tX = playerController.position.x + (dashDir.x * 4.5), tZ = playerController.position.z + (dashDir.z * 4.5), cM = true;
+                    for (let w of structures) if (Math.abs(tX - w.position.x) < 7.5 && Math.abs(tZ - w.position.z) < 7.5) { cM = false; break; }
+                    if (tX > 398) tX = 398; if (tX < -398) tX = -398;
+                    if (tZ > 398) tZ = 398; if (tZ < -398) tZ = -398;
+                    if (cM) { playerController.position.x = tX; playerController.position.z = tZ; }
+                    canDash = false; setTimeout(() => canDash = true, dashCooldownTime); dashAnimationStartTime = Date.now();
+                }
+            }
+            keys[e.code] = true;
+        });
+        window.addEventListener('keyup', e => keys[e.code] = false);
+        window.addEventListener('mousemove', e => { 
+            if(document.pointerLockElement !== document.body || isPaused) return; 
+            const s = 0.002 * parseFloat(document.getElementById('sens-slider').value); 
+            playerController.rotation.y -= e.movementX * s; visualCamera.rotation.x -= e.movementY * s; 
+            visualCamera.rotation.x = Math.max(-1.4, Math.min(1.4, visualCamera.rotation.x)); 
+        });
+
+        document.getElementById('resume-btn').addEventListener('click', resumeGame);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if(!gameStarted || isPaused) { if(gameStarted) renderer.render(scene, visualCamera); return; }
+            if (currentSkin === 'rgb') {
+                let currentInterval = Math.floor(Date.now() / 2000);
+                if (lastRgbInterval !== currentInterval) { lastRgbInterval = currentInterval; enemies.forEach(en => applySkinToEnemy(en)); }
+            }
+            let dashElapsed = Date.now() - dashAnimationStartTime; 
+            document.getElementById('dash-bar').style.width = (dashElapsed < dashCooldownTime) ? ((dashElapsed / dashCooldownTime) * 100) + '%' : '100%';
+            let shieldElapsed = Date.now() - shieldActivationTime; 
+            const sBar = document.getElementById('shield-bar');
+            if (isShieldActive) { 
+                let rem = shieldDuration - shieldElapsed; 
+                if (rem <= 0) { isShieldActive = false; shieldMesh.visible = false; } 
+                sBar.style.width = Math.max(0, (rem / shieldDuration) * 100) + '%'; sBar.style.background = '#00aaff'; 
+                if (currentGameMode === 'april-normal') { player.hp -= 10/60; updateUI(); }
+            } else { 
+                let rech = shieldElapsed - shieldDuration, cool = shieldCooldown - shieldDuration; 
+                if (rech < cool && rech > 0) { sBar.style.width = ((rech / cool) * 100) + '%'; sBar.style.background = '#aaaaaa'; } 
+                else { sBar.style.width = '100%'; sBar.style.background = '#ffffff'; } 
+            }
+            let botiCooldown = (currentGameMode === 'lava') ? 2000 : 5000;
+            let botiElapsed = Date.now() - lastMedkitTime;
+            document.getElementById('weapon-bar').style.width = Math.min(100, (botiElapsed / botiCooldown) * 100) + '%';
+            if(shakeIntensity > 0) { visualCamera.position.x = (Math.random()-0.5) * shakeIntensity; visualCamera.position.y += (Math.random()-0.5) * shakeIntensity; shakeIntensity *= 0.9; }
+            for(let i=particles.length-1; i>=0; i--) { const p = particles[i]; p.position.add(p.userData.vel); p.userData.life -= 0.02; p.scale.setScalar(p.userData.life); if(p.userData.life <= 0) { scene.remove(p); particles.splice(i, 1); } }
+            if (currentGameMode !== 'dyd') {
+                let spawnDelay = isExtremeMode ? 2500 : 5000;
+                if (Date.now() - lastPassiveSpawn > spawnDelay && enemies.length < (isExtremeMode ? 25 : 12)) { spawnEnemy(player.kills > 0 && player.kills % 5 === 0); if (currentGameMode === 'double') spawnEnemy(); lastPassiveSpawn = Date.now(); }
+            }
+            if(isShooting && (Date.now() - player.lastShot > player.cooldown)) fireBullet(false);
+            const moveSpd = player.isAiming ? 0.2 : 0.45, oldX = playerController.position.x, oldZ = playerController.position.z;
+            if(keys['KeyW']) playerController.translateZ(-moveSpd); if(keys['KeyS']) playerController.translateZ(moveSpd);
+            if(keys['KeyA']) playerController.translateX(-moveSpd); if(keys['KeyD']) playerController.translateX(moveSpd);
+            let nX = playerController.position.x, nZ = playerController.position.z; playerController.position.set(oldX, 3.5, oldZ);
+            let cX = true, cZ = true;
+            for (let w of structures) { if (Math.abs(nX - w.position.x) < 7.5 && Math.abs(oldZ - w.position.z) < 7.5) cX = false; if (Math.abs(oldX - w.position.x) < 7.5 && Math.abs(nZ - w.position.z) < 7.5) cZ = false; }
+            if (nX > 398) nX = 398; if (nX < -398) nX = -398;
+            if (nZ > 398) nZ = 398; if (nZ < -398) nZ = -398;
+            if (cX) playerController.position.x = nX; if (cZ) playerController.position.z = nZ;
+            visualCamera.fov += ((player.isAiming ? parseFloat(document.getElementById('fov-slider').value) * 0.5 : parseFloat(document.getElementById('fov-slider').value)) - visualCamera.fov) * 0.15; visualCamera.updateProjectionMatrix();
+            visualCamera.position.z += ((isThirdPerson ? 8.5 : 0) - visualCamera.position.z) * 0.15; visualCamera.position.y += ((isThirdPerson ? 2.5 : 0) - visualCamera.position.y) * 0.15;
+            gunBody.position.x += ((player.isAiming ? 0 : 1.0) - gunBody.position.x) * 0.1; gunBody.position.z += (-2.0 - gunBody.position.z) * 0.1;
+
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const b = bullets[i]; if (Date.now() - b.userData.startTime > 6000) { scene.remove(b); bullets.splice(i, 1); continue; }
+                b.position.add(b.userData.vel); let h = false;
+                
+                let sniperPresent = enemies.some(e => e.userData.isSniper);
+                for (let w of structures) {
+                    if (Math.abs(b.position.x - w.position.x) < 6.5 && Math.abs(b.position.z - w.position.z) < 6.5) { 
+                        let canPass = sniperPresent && (!b.userData.isEnemy || b.userData.isSniperBullet);
+                        if (!canPass) {
+                            scene.remove(b); bullets.splice(i, 1); h = true; break; 
+                        }
+                    }
+                }
+                
+                if (h) continue;
+                if(!b.userData.isEnemy) {
+                    for (let ei = enemies.length - 1; ei >= 0; ei--) {
+                        const en = enemies[ei];
+                        if(b.position.distanceTo(en.position) < (en.userData.hitRadius || (en.userData.isBoss ? 5.5 : 3.5))) {
+                            en.userData.hp -= player.dmg; scene.remove(b); bullets.splice(i, 1);
+                            const body = en.children[0]; body.material.color.setHex(0xffffff); setTimeout(() => { if(body && body.material && !en.userData.isImmortal) applySkinToEnemy(en); }, 100); 
+                            if(en.userData.hp <= 0) { 
+                                if (en.userData.isAtomic) killedAtomic = true;
+                                if (en.userData.isStalkerBoss) killedStalkerBoss = true;
+                                if (en.userData.isBoss && !en.userData.isStalkerBoss && !en.userData.isAtomic && !en.userData.isStalkazeBoss) killedNormalBoss = true;
+                                createDeathParticles(en.position, body.material.color.getHex()); 
+                                if (currentGameMode === 'double' && !en.userData.isSmall) { spawnEnemy(false, false, en.position.clone().add(new THREE.Vector3(2,0,0)), true, en.userData); spawnEnemy(false, false, en.position.clone().add(new THREE.Vector3(-2,0,0)), true, en.userData); }
+                                player.kills++; player.dmg += isExtremeMode ? 1.25 : 2; player.cooldown = Math.max(200, player.cooldown - (isExtremeMode ? 37.5 : 50)); 
+                                enemyBaseHp += 10; scene.remove(en); enemies.splice(ei, 1); if (currentGameMode === 'infection') infectionTime += 5; updateUI(); 
+                            } break;
+                        }
+                    }
+                } else if(b.position.distanceTo(playerController.position) < 2.5) { 
+                    if (currentGameMode === 'april-normal') {
+                        if (player.hp < 150) { 
+                            let healAmount = b.userData.isSniperBullet ? 50 : (b.userData.isBossBullet ? 30 : 15);
+                            player.hp = Math.min(150, player.hp + healAmount); 
+                            triggerFlash(0.4, 100, '#2ecc71'); 
+                        }
+                    } else if (!isShieldActive) { 
+                        let dmgTaken = b.userData.isBossBullet ? (isExtremeMode ? 60 : 30) : (isExtremeMode ? 20 : 15);
+                        if (b.userData.isSniperBullet) dmgTaken = Math.random() < 0.25 ? 150 : 50;
+                        player.hp -= dmgTaken; 
+                        triggerFlash(0.5); shakeIntensity = 0.4; 
+                    } 
+                    updateUI(); scene.remove(b); bullets.splice(i, 1); 
+                }
+            }
+            for (let ei = enemies.length - 1; ei >= 0; ei--) {
+                const en = enemies[ei], dist = en.position.distanceTo(playerController.position), dir = new THREE.Vector3().subVectors(playerController.position, en.position).normalize();
+                if (currentGameMode === 'un-toque') en.userData.hp = 1;
+                
+                if (en.userData.isSniper) {
+                    let isVis = dist <= 30;
+                    en.children.forEach(c => {
+                        if (c !== en.userData.laser) c.visible = isVis;
+                    });
+                    
+                    if (isVis) {
+                        if (currentSkin === 'retro') { en.children[1].visible = false; en.children[2].visible = true; en.children[3].visible = true; } 
+                        else if (currentSkin === 'retro_2' || currentSkin === 'retro_1_5') { en.children[1].visible = false; en.children[2].visible = false; en.children[3].visible = false; } 
+                        else { en.children[1].visible = true; en.children[2].visible = false; en.children[3].visible = false; }
+                    }
+                    
+                    en.lookAt(playerController.position.x, en.position.y, playerController.position.z);
+                    let now = Date.now();
+                    if (!en.userData.aimStart) en.userData.aimStart = 0;
+                    
+                    if (now - en.userData.lastShot > 5400) { 
+                        if (en.userData.aimStart === 0) en.userData.aimStart = now;
+                        let aimTime = now - en.userData.aimStart;
+                        
+                        if (aimTime >= 1500) { 
+                            en.userData.laser.visible = true;
+                            let targetWorld = new THREE.Vector3();
+                            if (isThirdPerson) {
+                                targetWorld.copy(playerController.position);
+                                targetWorld.y += 1.5;
+                            } else {
+                                visualCamera.getWorldPosition(targetWorld);
+                            }
+                            let localTarget = en.worldToLocal(targetWorld);
+                            en.userData.laser.geometry.setFromPoints([new THREE.Vector3(0, 1.5, 0), localTarget]);
+                        } else {
+                            en.userData.laser.visible = false;
+                        }
+                        
+                        if (aimTime >= 3000) { 
+                            en.userData.laser.visible = false;
+                            let fDir = new THREE.Vector3().subVectors(playerController.position, en.position).normalize();
+                            fireBullet(true, en.position.clone(), fDir, false, true, en.userData.targetStruct); 
+                            en.userData.lastShot = now;
+                            en.userData.aimStart = 0;
+                        }
+                    } else {
+                        en.userData.laser.visible = false;
+                    }
+                    continue; 
+                }
+
+                let isStalkaze = en.userData.isStalkazeBoss || en.userData.isStalkazeMinion;
+                if (isStalkaze) en.userData.speed = isShieldActive ? (en.userData.isStalkazeBoss ? 0.12 : 0.24) : en.userData.baseSpeed;
+                if (en.userData.isAtomic || en.userData.isKamikaze || isStalkaze) { 
+                    if (currentSkin === 'rgb' || currentSkin === 'holograma') { en.children[0].material.emissive.setHex(0x000000); } 
+                    else { en.children[0].material.emissive.setHex(Date.now() % 200 < 100 ? (isStalkaze ? 0x8e44ad : 0xff0000) : 0x000000); en.children[0].material.emissiveIntensity = 0.5; }
+                }
+                en.position.x += dir.x * en.userData.speed; en.position.z += dir.z * en.userData.speed; en.lookAt(playerController.position.x, en.position.y, playerController.position.z);
+                if (en.userData.isKamikaze) {
+                    if (dist < 3.8) {
+                        if (currentGameMode === 'april-normal') {
+                            if (player.hp < 150) { player.hp = Math.min(150, player.hp + (en.userData.isImmortal ? 50 : en.userData.meleeDmg)); triggerFlash(0.4, 100, '#2ecc71'); }
+                        } else if (!isShieldActive) { player.hp -= en.userData.meleeDmg; triggerFlash(0.7); shakeIntensity = 1.0; } 
+                        else audioBlockHit.cloneNode().play();
+                        updateUI(); createDeathParticles(en.position, en.children[0].material.color.getHex()); scene.remove(en); enemies.splice(ei, 1); continue;
+                    }
+                } else if (isStalkaze) {
+                    if (dist < 3.8) {
+                        if (currentGameMode === 'april-normal') {
+                            if (player.hp < 150) { player.hp = Math.min(150, player.hp + en.userData.meleeDmg); triggerFlash(0.4, 100, '#2ecc71'); }
+                            updateUI(); createDeathParticles(en.position, en.children[0].material.color.getHex()); scene.remove(en); enemies.splice(ei, 1); continue;
+                        } else if (!isShieldActive) {
+                            player.hp -= en.userData.meleeDmg; triggerFlash(0.7); shakeIntensity = 1.0; updateUI();
+                            createDeathParticles(en.position, en.children[0].material.color.getHex()); scene.remove(en); enemies.splice(ei, 1); continue;
+                        }
+                    }
+                    if (dist < 80 && Date.now() - en.userData.lastShot > (en.userData.isBoss ? 2500 : 1800)) { 
+                        let fDir = dir.clone(); if (currentGameMode === 'april-normal' && Math.random() > 0.75) fDir.add(new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5)).normalize();
+                        fireBullet(true, en.position.clone(), fDir, en.userData.isBoss); en.userData.lastShot = Date.now(); 
+                    }
+                } else if (en.userData.isStalker || en.userData.isStalkerBoss || currentGameMode === 'dyd' || en.userData.isImmortal) { 
+                    if (dist < 5.0 && Date.now() - en.userData.lastMelee > 2340) { 
+                        if (currentGameMode === 'april-normal') {
+                            if (player.hp < 150) { player.hp = Math.min(150, player.hp + (en.userData.isImmortal ? 50 : en.userData.meleeDmg)); triggerFlash(0.4, 100, '#2ecc71'); }
+                        } else if (!isShieldActive) { player.hp -= en.userData.meleeDmg; triggerFlash(0.5); } 
+                        updateUI(); en.userData.lastMelee = Date.now(); 
+                    } 
+                } else { 
+                    if(dist < 80 && Date.now() - en.userData.lastShot > (en.userData.isBoss ? 2500 : 1800)) { 
+                        let fDir = dir.clone(); if (currentGameMode === 'april-normal' && Math.random() > 0.75) fDir.add(new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5)).normalize();
+                        fireBullet(true, en.position.clone(), fDir, en.userData.isBoss); en.userData.lastShot = Date.now(); 
+                    } 
+                }
+            }
+            chests.forEach((ch, i) => { if(playerController.position.distanceTo(ch.position) < 4) { 
+                scene.remove(ch); chests.splice(i, 1); 
+                if (currentGameMode === 'april-normal') { player.hp -= 25; triggerFlash(0.5); } else { player.medkits++; }
+                updateUI(); setTimeout(spawnChest, (currentGameMode === 'double' || currentGameMode === 'lava') ? 20000 : 12000); 
+            } });
+            renderer.render(scene, visualCamera);
+        }
+        initWorld(); applySettings(); updateUI(); animate();
+    </script>
+</body>
+</html>
