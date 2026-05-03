@@ -93,7 +93,7 @@
             <h2 style="color:#f1c40f; margin-top:0;">MENÚ DE PAUSA</h2>
             <div class="setting-row">
                 <label>ZOOM</label>
-                <input type="range" id="fov-slider" min="45" max="55" value="50">
+                <input type="range" id="fov-slider" min="30" max="60" value="45">
             <div class="setting-row">
                 <label>SKIN (SYNC)</label>
                 <select id="skin-select">
@@ -183,13 +183,13 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
         let lastPassiveSpawn = Date.now(), lastMedkitTime = 0;
         let infectionTime = 30, infectionInterval = null;
         let killedNormalBoss = false, killedAtomic = false, killedStalkerBoss = false;
-        let mapSize = 2000; // Arena de -1000 a 1000
+        let mapSize = 4000; // Arena de -2000 a 2000
         let bgColor = hexToColor(0x05050a), floorColor = hexToColor(0x111122), structColor = hexToColor(0x1a1a2e);
 
         // Inicializar Mundo 2D
         function initWorld() {
             structures = [];
-            for(let i=0; i<45; i++) {
+            for(let i=0; i<85; i++) {
                 structures.push({
                     x: (Math.random() * mapSize) - (mapSize/2),
                     y: (Math.random() * mapSize) - (mapSize/2),
