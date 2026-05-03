@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buuñ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; transition: filter 0.3s; }
+        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        #header { position: absolute; top: 10px; width: 100%; text-align: center; color: #f1c40f; font-size: 24px; text-shadow: 3px 3px #c0392b; }
+        
+        #parca-alert { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); color: #8e44ad; font-size: 35px; text-shadow: 3px 3px #000; display: none; z-index: 20; text-transform: uppercase; }
+        #boss-alert { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); color: #ff0000; font-size: 30px; text-shadow: 3px 3px #000; display: none; z-index: 15; text-transform: uppercase; }
+        #infection-timer { position: absolute; top: 110px; left: 20px; color: #e74c3c; font-size: 40px; display: none; text-shadow: 2px 2px #000; }
+
+        #bottom-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 90px; background: linear-gradient(0deg, #111 0%, #222 100%); border-top: 4px solid #f1c40f; display: flex; justify-content: space-around; align-items: center; color: #fff; pointer-events: auto; }
+        .stat-box { text-align: center; border: 2px solid #f1c40f; padding: 5px 15px; background: rgba(0,0,0,0.8); min-width: 110px; }
+        .stat-label { font-size: 10px; display: block; color: #f1c40f; }
+        .stat-num { font-size: 28px; font-weight: bold; }
+        #cd-display { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); color: #f1c40f; font-size: 14px; text-shadow: 2px 2px #000; text-align: center; }
+        #bars-container { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); width: 200px; display: flex; flex-direction: column; gap: 5px; }
+        #weapon-bar-container { position: absolute; bottom: 100px; right: 6.5%; width: 110px; display: flex; flex-direction: column; gap: 5px; }
+        .bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border: 1px solid #000; pointer-events: none; }
+        #dash-bar { width: 100%; height: 100%; background: #fff; }
+        #shield-bar { width: 100%; height: 100%; background: #0088ff; }
+        #weapon-bar { width: 100%; height: 100%; background: #2ecc71; }
+        #msg-console { position: absolute; top: 50px; left: 20px; color: #2ecc71; font-size: 12px; font-family: 'Courier New'; text-shadow: 1px 1px #000; }
+        #crosshair { position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; transform: translate(-50%, -50%); border: 2px solid #2ecc71; }
+        #flash { position: absolute; width: 100%; height: 100%; background: #e74c3c; opacity: 0; pointer-events: none; }
+        #pause-menu { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 20; color: white; flex-direction: column; justify-content: center; align-items: center; pointer-events: auto; backdrop-filter: blur(8px); }
+        .pause-box { background: #111; padding: 25px; border: 3px solid #f1c40f; text-align: center; width: 420px; }
+        .setting-row { margin: 12px 0; text-align: left; }
+        label { font-size: 12px; color: #f1c40f; text-transform: uppercase; }
+        select, input[type="range"] { width: 100%; background: #222; color: #fff; border: 1px solid #f1c40f; padding: 6px; margin-top: 5px; }
+        #resume-btn { background: #2ecc71; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 100%; color: #000; font-size: 16px; }
+        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px); overflow-y: auto; }
+        .mode-btn { background: #111; color: #f1c40f; border: 2px solid #f1c40f; padding: 12px; font-size: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; margin-top: 8px; width: 100%; }
+        .mode-btn:hover { background: #f1c40f; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div id="start-screen" style="background: url('Buuñpiezadearteosiosi.png') center center / cover no-repeat; background-color: #000;">
+        <div class="pause-box">
+            <h2 style="color:#f1c40f; margin-top:0;">Buuñ: Seleciona que version jugar</h2>
+            <a href="Buuñ 2D - copia - copia.html" class="mode-btn">JUGAR VERSIÓN 2D</a>
+        <a href="Buuñ Pre⁶-Guns, cosmetics & arrows.html" class="mode-btn">JUGAR VERSIÓN 3D</a></button>
+        </div>
+    </div>
+/script>
+</body>
+</html>
