@@ -9,6 +9,7 @@ Este juego fue echo en mi colegio y decidi publicarlo aca
 ¿De que es el juego? El juego es un shooter estilo Doom
 
 Creditos de los creadores de Die of Death por la musica/efectos de sonido
+
 por ahora no es compatible con telefono
 
 Controles
