@@ -1,2 +1,2 @@
-# Buu-del-cole-copia-de-Doom-
+# Buuñ
 es un shooter y ahi me quede
