@@ -14,7 +14,7 @@ la vida de los boses no se basan en hp, si no en golpes, aunque hagas 100 de da�
 -daño:15
 -daño en super duper mega extreme demon😈:20
 -vida:150
--vida en super duper mega extreme demon😈: 200 (creo)
+-vida en super duper mega extreme demon😈: 200
 
 3-Boss normal
 -info: es uno de los 4 enemigos que disparan actualmente, es igual que el enemigo normal pero mas grande y lento
@@ -22,7 +22,7 @@ la vida de los boses no se basan en hp, si no en golpes, aunque hagas 100 de da�
 -daño:15
 -daño en super duper mega extreme demon😈:60
 -vida: 10 golpes
-vida en super duper mega extreme demon😈: 15 (creo)
+vida en super duper mega extreme demon😈: 20 golpes
 
 4-Stalker
 -info: es un enemigo cuerpo a cuerpo, es de color rosa/salmon (en hexadecimal ff8888)
@@ -37,8 +37,7 @@ vida en super duper mega extreme demon😈: 15 (creo)
 -Velocidad: 0.24
 -daño:60
 -daño en super duper mega extreme demon😈: 120 (creo)
--vida: 20 golpes (creo)
--vida en super duper mega extreme demon😈: 25 (creo)
+-vida: 20 golpes
 
 6-Kamikaze
 -info: explota cuando toca a el jugador, gana 50% mas de vida por cada kill (creo), es de color bordo y rojo claro (el color rojo en hexadecimal ff0000 y color bordo en hexadecimal 440000)
