@@ -1,0 +1,90 @@
+Este archivo es donde estan la info de los enemigos
+los enemigos por cada kill que haces ganan mas daño y mas vida (no se muy bien como y creo que algunos enemigos no tienen esto)
+algunos datos pueden estar mal o/y desactualizados
+la vida de los boses no se basan en hp, si no en golpes, aunque hagas 100 de daño el boss solo se va a morir cuando le pegues los golpes necesarios para matarlo
+
+1-Jugador
+-velocidad: 0.45
+-Cuanto daño extra hace por kill: +2
+-Cuanto daño extra hace por kill en super duper mega extreme demon😈:+1.25
+
+2-Enemigo normal
+-info: es uno de los 4 enemigos que disparan actualmente, es de color rojo (en hexadecimal e74c3c) y dispara un proyectil rojo
+-velocidad: 0.16
+-daño:15
+-daño en super duper mega extreme demon😈:20
+-vida:150
+-vida en super duper mega extreme demon😈: 200 (creo)
+
+3-Boss normal
+-info: es uno de los 4 enemigos que disparan actualmente, es igual que el enemigo normal pero mas grande y lento
+-Velocidad: 0.08
+-daño:15
+-daño en super duper mega extreme demon😈:60
+-vida: 10 golpes
+vida en super duper mega extreme demon😈: 15 (creo)
+
+4-Stalker
+-info: es un enemigo cuerpo a cuerpo, es de color rosa/salmon (en hexadecimal ff8888)
+-Velocidad: 0.48
+-daño:30
+-daño en super duper mega extreme demon😈:60
+-vida: 175
+-vida en super duper mega extreme demon😈: 250
+
+5-Stalker boss
+-info: es un enemigo cuerpo a cuerpo, es igual que el Stalker pero mas grande y lento
+-Velocidad: 0.24
+-daño:60
+-daño en super duper mega extreme demon😈: 120 (creo)
+-vida: 20 golpes (creo)
+-vida en super duper mega extreme demon😈: 25 (creo)
+
+6-Kamikaze
+-info: explota cuando toca a el jugador, gana 50% mas de vida por cada kill (creo), es de color bordo y rojo claro (el color rojo en hexadecimal ff0000) (no encontre el bordo)
+-velocidad:0.64
+-daño:50
+-daño en super duper mega extreme demon😈:100
+-vida:50
+-vida en super duper mega extreme demon😈: 100
+
+7-Kamikaze boss
+-info:explota cuando toca a el jugador, es igual que el kamikaze solo que mas grande, lento, y solo usa el color rojo claro (ff0000)
+-velocidad:0.32
+-daño:100
+-daño en super duper mega extreme demon😈:insta-kill (o 9999)
+-vida:5 golpes
+-vida en super duper mega extreme demon😈:10 (creo)
+
+8-Sniper
+-info:es uno de los 4 enemigos que disparan actualmente, es gris y spawnea en las estructuras
+-velocidad:0 (y aunque la cambies se quedara quieto en la estructura donde spawnee)
+-daño: 25% 75 y 75% 50 (esto es igual en super duper mega extreme demon😈)
+-vida:200
+-vida super duper mega extreme demon😈:250
+
+9-EL DUO DE LA PARCA (Stalkaze minion y Stalkaze boss)
+
+-info:son 2 de los 4 enemigos que disparan actualmente, los dos son morados, disparan y explotan. Su objetivo es acabar (parcialmente) con el jugador
+-tienen una pasiva "Yeah bro, do you really think i am stupid?" que lo que hace es cuando el jugador activa el escudo estos 2 no podran explotar, a cambio, seran mas lentos
+
+9.25-Stalkaze minion
+-velocidad: 0.70 (el mas rapido)
+--velocidad con la pasiva "Yeah bro, do you really think i am stupid?": 0.24
+-daño de bala: igual que el enemigo normal
+-daño cuerpo a cuerpo:70
+daño cuerpo a cuerpo en super duper mega extreme demon😈:insta-kill
+
+9.75-Stalkaze Boss
+-velocidad: 0.40
+-velocidad con la pasiva "Yeah bro, do you really think i am stupid?": 0.12
+-daño de bala: igual que el boss normal
+-daño cuerpo a cuerpo: igual que el stalkaze minion
+
+10-Killer de Dye of Deaf
+-info: es blanco y solo aparece en el modo "Dye of Deaf" (si, como ese juego)
+-velocidad:0.50
+-daño:50
+-vida:inmortal (aunque tuvieras el arma en ese modo, no lo podrias matar porque su vida literalmente es infinito)
+
+espero que esto te pueda facilitar jugar :)
