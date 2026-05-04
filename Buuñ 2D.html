@@ -396,7 +396,7 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
             player.kills = 0; player.dmg = 25; player.medkits = 0;
             
             if (currentGameMode === 'infection' || currentGameMode === 'april-normal') {
-                infectionTime = (currentGameMode === 'april-normal') ? 150 : 30;
+                infectionTime = (currentGameMode === 'april-normal') ? 77 : 30;
                 document.getElementById('infection-timer').style.display = 'block';
                 if(infectionInterval) clearInterval(infectionInterval);
                 infectionInterval = setInterval(() => {

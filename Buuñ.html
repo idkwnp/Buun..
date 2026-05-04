@@ -484,7 +484,7 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
             if (currentGameMode === 'un-toque') { player.hp = 1; } else { player.hp = 150; }
             
             if (currentGameMode === 'infection' || currentGameMode === 'april-normal') {
-                infectionTime = (currentGameMode === 'april-normal') ? 150 : 30;
+                infectionTime = (currentGameMode === 'april-normal') ? 77 : 30;
                 document.getElementById('infection-timer').style.display = 'block';
                 if(infectionInterval) clearInterval(infectionInterval);
                 infectionInterval = setInterval(() => {
