@@ -82,7 +82,7 @@ daño cuerpo a cuerpo en super duper mega extreme demon😈:insta-kill
 -daño cuerpo a cuerpo: igual que el stalkaze minion
 
 10-Killer de Dye of Deaf
--info: es blanco y solo aparece en el modo "Dye of Deaf" (si, como ese juego)
+-info: es blanco (aunque sea blanco puro este es su color en hexadecimal ffffff) y aparece en el modo "Dye of Deaf" (si, como ese juego) y en el modo ""NORMAL""
 -velocidad:0.50
 -daño:50
 -vida:inmortal (aunque tuvieras el arma en ese modo, no lo podrias matar porque su vida literalmente es infinito)
