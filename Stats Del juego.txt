@@ -41,7 +41,7 @@ vida en super duper mega extreme demon😈: 15 (creo)
 -vida en super duper mega extreme demon😈: 25 (creo)
 
 6-Kamikaze
--info: explota cuando toca a el jugador, gana 50% mas de vida por cada kill (creo), es de color bordo y rojo claro (el color rojo en hexadecimal ff0000) (no encontre el bordo)
+-info: explota cuando toca a el jugador, gana 50% mas de vida por cada kill (creo), es de color bordo y rojo claro (el color rojo en hexadecimal ff0000 y color bordo en hexadecimal 440000)
 -velocidad:0.64
 -daño:50
 -daño en super duper mega extreme demon😈:100
@@ -57,7 +57,7 @@ vida en super duper mega extreme demon😈: 15 (creo)
 -vida en super duper mega extreme demon😈:10 (creo)
 
 8-Sniper
--info:es uno de los 4 enemigos que disparan actualmente, es gris y spawnea en las estructuras
+-info:es uno de los 4 enemigos que disparan actualmente, es gris (en hexadecimal 808080) y spawnea en las estructuras
 -velocidad:0 (y aunque la cambies se quedara quieto en la estructura donde spawnee)
 -daño: 25% 75 y 75% 50 (esto es igual en super duper mega extreme demon😈)
 -vida:200
@@ -65,7 +65,7 @@ vida en super duper mega extreme demon😈: 15 (creo)
 
 9-EL DUO DE LA PARCA (Stalkaze minion y Stalkaze boss)
 
--info:son 2 de los 4 enemigos que disparan actualmente, los dos son morados, disparan y explotan. Su objetivo es acabar (parcialmente) con el jugador
+-info:son 2 de los 4 enemigos que disparan actualmente, los dos son morados (o en hexadecimal 8e44ad), disparan y explotan. Su objetivo es acabar (parcialmente) con el jugador
 -tienen una pasiva "Yeah bro, do you really think i am stupid?" que lo que hace es cuando el jugador activa el escudo estos 2 no podran explotar, a cambio, seran mas lentos
 
 9.25-Stalkaze minion
