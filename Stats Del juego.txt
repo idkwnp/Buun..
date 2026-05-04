@@ -35,8 +35,7 @@ vida en super duper mega extreme demon😈: 20 golpes
 5-Stalker boss
 -info: es un enemigo cuerpo a cuerpo, es igual que el Stalker pero mas grande y lento
 -Velocidad: 0.24
--daño:60
--daño en super duper mega extreme demon😈: 120 (creo)
+-daño:30
 -vida: 20 golpes
 
 6-Kamikaze
@@ -53,7 +52,7 @@ vida en super duper mega extreme demon😈: 20 golpes
 -daño:100
 -daño en super duper mega extreme demon😈:insta-kill (o 9999)
 -vida:5 golpes
--vida en super duper mega extreme demon😈:10 (creo)
+-vida en super duper mega extreme demon😈:20 golpes
 
 8-Sniper
 -info:es uno de los 4 enemigos que disparan actualmente, es gris (en hexadecimal 808080) y spawnea en las estructuras
