@@ -1,0 +1,12 @@
+Buenas.
+Este archivo es una explicacion de como funcionan los 2 modos de juego que tienen una mecanica diferente
+
+1-Dye of Deaf (o DYD (y si, como ese juego))
+-en este modo tu objetivo es de escapar del killer, agarrando 15 botis (las cajas verdes) para escapar.
+El escudo esta bloqueado
+
+2-""Normal""
+-en este modo tu objetivo es morir y los enemigos te curan.
+Para morir o usa el escudo, que te hace daño (aunque los enemigos te pueden seguir curando aunque tengas el escudo) o agarra los botis, que te hacen 25 de daño
+
+espero que esto te ayude
